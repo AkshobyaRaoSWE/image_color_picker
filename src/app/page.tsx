@@ -20,7 +20,17 @@ export default function Home() {
       canvas.height = img.height;
       context?.drawImage(img, 0, 0, img.width, img.height);
     };
-  }, []);
+  }, [color]);
+
+  const rgbaToHex = (r: number, g: number, b: number) => {
+    const toHex = (n: number) => {
+      return n.toString(16).length === 1
+        ? "0" + n.toString(16)
+        : n.toString(16);
+    };
+
+    return toHex(r) + toHex(g) + toHex(b);
+  };
   // pass the nuber as client.x and y gives you a number instead of saying client which is the mouse event, then you get x and y froom that
   const getColor = (x: number, y: number) => {
     const img = imgRef.current;
@@ -34,11 +44,10 @@ export default function Home() {
     const yPos = y - location.top;
     const pixel = context?.getImageData(xPos, yPos, 1, 1).data;
     if (!pixel) return;
-    const rgba = `rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${
-      pixel[3] / 255
-    })`;
-    setColor(rgba);
+
+    setColor(rgbaToHex(pixel[0], pixel[1], pixel[2]));
   };
+
   return (
     <div>
       <img
@@ -46,11 +55,20 @@ export default function Home() {
         ref={imgRef}
         height={200}
         width={200}
+        crossOrigin="anonymous"
+        className="cursor-crosshair"
         alt=""
         onClick={(e) => getColor(e.clientX, e.clientY)}
       />
       <canvas className="hidden" ref={canvasRef} />
-      {color ? <div className={`bg-[${color}] h-96 w-96`}></div> : ""}
+      {color ? (
+        <div
+          className="h-96 w-96"
+          style={{ backgroundColor: `#${color}` }}
+        ></div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
