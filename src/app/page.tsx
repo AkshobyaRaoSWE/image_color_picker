@@ -42,6 +42,10 @@ export default function Home() {
     const location = canvas.getBoundingClientRect();
     const context = canvas.getContext("2d");
 
+    // basically, the canvas itself is smaller than when we use flexbox, which scales it up/down
+    // so, we see how much it was scaled by and scale the user input down/up the same amount
+    // because, the # of pixels they are moving / mouse location is relative to the size of the image as how we calculate it
+    // so we scale it down
     const scaleX = canvas.width / location.width;
     const scaleY = canvas.height / location.height;
     const xPos = (x - location.left) * scaleX;
