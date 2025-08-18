@@ -13,6 +13,8 @@ export default function Home() {
 
     if (!img || !canvas) return;
 
+    const location = canvas.getBoundingClientRect();
+
     const context = canvas.getContext("2d");
 
     img.onload = () => {
@@ -40,8 +42,11 @@ export default function Home() {
     const location = canvas.getBoundingClientRect();
     const context = canvas.getContext("2d");
 
-    const xPos = x - location.left;
-    const yPos = y - location.top;
+    const scaleX = canvas.width / location.width;
+    const scaleY = canvas.height / location.height;
+    const xPos = (x - location.left) * scaleX;
+    const yPos = (y - location.top) * scaleY;
+    console.log(location.left, location.top, x, y);
     const pixel = context?.getImageData(xPos, yPos, 1, 1).data;
     if (!pixel) return;
 
@@ -49,26 +54,33 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <main className="flex gap-5">
       <img
         src="https://picsum.photos/300"
         ref={imgRef}
         height={200}
         width={200}
         crossOrigin="anonymous"
-        className="cursor-crosshair"
+        className="hidden"
         alt=""
         onClick={(e) => getColor(e.clientX, e.clientY)}
       />
-      <canvas className="hidden" ref={canvasRef} />
+      <canvas
+        ref={canvasRef}
+        className="cursor-crosshair rounded-md"
+        onClick={(e) => getColor(e.clientX, e.clientY)}
+      />
       {color ? (
-        <div
-          className="h-96 w-96"
-          style={{ backgroundColor: `#${color}` }}
-        ></div>
+        <section>
+          <div
+            className="h-96 w-96 rounded-md"
+            style={{ backgroundColor: `#${color}` }}
+          ></div>
+          <p className="font-bold mt-5">Hex Color: #{color}</p>
+        </section>
       ) : (
         ""
       )}
-    </div>
+    </main>
   );
 }
